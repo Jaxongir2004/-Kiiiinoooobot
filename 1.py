@@ -3,9 +3,13 @@ from flask import Flask, request
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import Message
+import logging
+
+# Logger sozlash
+logging.basicConfig(level=logging.INFO)
 
 # Bot tokeni va kanal ID
-BOT_TOKEN = "YOUR_BOT_TOKEN"
+BOT_TOKEN = "8045139770:AAHUhUrFWxy7MVZsdpCrk_BkBz3umrM-Qcs"
 CHANNEL_ID = -1002361380161  
 WEBHOOK_URL = "https://your-app-name.onrender.com/webhook"
 
@@ -24,7 +28,7 @@ kino_id_lugat = {
 @app.route("/webhook", methods=["POST"])
 async def receive_update():
     update = types.Update(**request.json)
-    await dp._process_update(update)
+    await dp.feed_update(bot, update)  # YANGILANGAN!
     return "OK", 200
 
 @dp.message(Command("start"))
@@ -41,11 +45,11 @@ async def find_movie(message: Message):
     else:
         await message.answer("❌ Bunday ID bilan kino topilmadi. Iltimos, tekshirib qayta kiriting.")
 
-async def main():
+async def on_startup():
     await bot.set_webhook(WEBHOOK_URL)
-    await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.create_task(dp.start_polling(bot))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(on_startup())  
     app.run(host="0.0.0.0", port=10000)

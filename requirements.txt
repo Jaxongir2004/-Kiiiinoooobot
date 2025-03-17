@@ -1,2 +1,4 @@
-aiogram
+aiogram[flask]
 python-dotenv
+flask
+gunicorn
